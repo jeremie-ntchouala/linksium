@@ -289,7 +289,7 @@ comment {
 }
 
 widget_class Slicer_Page {open
-  xywh {569 228 470 215} labelsize 10 align 80 size_range {470 215 470 215} visible position_relative
+  xywh {588 178 470 215} labelsize 10 align 80 size_range {470 215 470 215} visible position_relative
 } {
   Fl_Group {} {
     label input_ramp open
@@ -320,8 +320,8 @@ PHASE}
     }
   }
   Fl_Group input_pid_group {
-    label input_pid_group
-    xywh {45 2 325 100} color 55 labeltype NO_LABEL labelsize 10 align 16 hide
+    label input_pid_group open
+    xywh {45 2 325 100} color 55 labeltype NO_LABEL labelsize 10 align 16
   } {
     Fl_Group {} {
       label {RAMP:} open
@@ -329,15 +329,15 @@ PHASE}
     } {
       Fl_Value_Input {} {
         label {Min:}
-        xywh {88 17 79 17} labelsize 10 align 1 minimum -10 maximum 10 textsize 10
+        xywh {88 17 60 17} labelsize 10 align 1 minimum -10 maximum 10 textsize 10
       }
       Fl_Value_Input {} {
         label {Max:}
-        xywh {187 17 79 17} labelsize 10 align 1 minimum -10 maximum 10 textsize 10
+        xywh {160 17 60 17} labelsize 10 align 1 minimum -10 maximum 10 textsize 10
       }
       Fl_Value_Input {} {
         label {Speed:}
-        xywh {287 17 79 17} labelsize 10 align 1 minimum -10 maximum 10 textsize 10
+        xywh {232 17 60 17} labelsize 10 align 1 minimum -10 maximum 10 textsize 10
       }
     }
     Fl_Group {} {
@@ -346,15 +346,15 @@ PHASE}
     } {
       Fl_Value_Input pid1_p {
         label {P:}
-        xywh {88 50 79 17} labelsize 10 align 1 minimum -100 maximum 100 textsize 10
+        xywh {88 50 60 17} labelsize 10 align 1 minimum -100 maximum 100 textsize 10
       }
       Fl_Value_Input pid1_i {
         label {I:}
-        xywh {187 50 79 17} labelsize 10 align 1 minimum -100 maximum 100 textsize 10
+        xywh {160 50 60 17} labelsize 10 align 1 minimum -100 maximum 100 textsize 10
       }
       Fl_Value_Input pid1_d {
         label {D:}
-        xywh {287 50 79 17} labelsize 10 align 1 minimum -100 maximum 100 textsize 10
+        xywh {232 50 60 17} labelsize 10 align 1 minimum -100 maximum 100 textsize 10
       }
     }
     Fl_Group {} {
@@ -363,21 +363,21 @@ PHASE}
     } {
       Fl_Value_Input pid2_p {
         label {P:}
-        xywh {88 83 79 17} labelsize 10 align 1 minimum -100 maximum 100 textsize 10
+        xywh {88 83 60 17} labelsize 10 align 1 minimum -100 maximum 100 textsize 10
       }
       Fl_Value_Input pid2_i {
         label {I:}
-        xywh {187 83 79 17} labelsize 10 align 1 maximum 10 textsize 10
+        xywh {160 83 60 17} labelsize 10 align 1 maximum 10 textsize 10
       }
       Fl_Value_Input pid2_d {
         label {D:}
-        xywh {287 83 79 17} labelsize 10 align 1 maximum 10 textsize 10
+        xywh {232 83 60 17} labelsize 10 align 1 maximum 10 textsize 10
       }
     }
   }
   Fl_Group input_slide_group {
     label input_slide_group open
-    xywh {45 2 325 100} color 55 labeltype NO_LABEL labelsize 10 align 16
+    xywh {45 2 325 100} color 55 labeltype NO_LABEL labelsize 10 align 16 hide
   } {
     Fl_Group {} {
       label frequence open
@@ -730,7 +730,7 @@ slider_phase->do_callback();}
     }
   }
   Fl_Group {} {
-    label ouput_slice_group
+    label ouput_slice_group open
     xywh {5 110 460 100} labeltype NO_LABEL labelsize 10 align 16
   } {
     Fl_Group {} {
@@ -835,20 +835,20 @@ class LinksiumViewUI {open
       label Linksium_3QUB open
       private xywh {578 101 480 272} type Double labelsize 12 align 80 when 0 size_range {480 272 480 272} visible
     } {
-      Fl_Group TitleApp {
-        image {title_image.png} compress_image 1 bind_image 1 xywh {275 0 200 24} labeltype NO_LABEL labelfont 1 labelsize 16 align 536
+      Fl_Group TitleApp {open
+        image {ressources/title_image.png} compress_image 1 bind_image 1 xywh {275 0 200 24} labeltype NO_LABEL labelfont 1 labelsize 16 align 536
       } {}
       Fl_Tabs categorie {
         label Categorie
-        callback {//printf("\\nval tab %n\\n", categorie->value());} open selected
+        callback {//printf("\\nval tab %n\\n", categorie->value());} open
         xywh {5 5 470 236} selection_color 45 labeltype NO_LABEL
       } {
         Fl_Group ConfigPage {
-          label Config
-          xywh {5 25 470 215} box THIN_UP_BOX labeltype NO_LABEL labelsize 12 hide
+          label Config open
+          xywh {5 25 470 215} box THIN_UP_BOX labeltype NO_LABEL labelsize 12
         } {
           Fl_Group {} {
-            label {Config Preferences}
+            label {Config Preferences} open
             xywh {10 45 460 165} labeltype NO_LABEL labelsize 10 align 17
           } {
             Fl_Choice config_choice {
@@ -938,8 +938,8 @@ class LinksiumViewUI {open
 
 Fl_Native_File_Chooser *G_chooser = new Fl_Native_File_Chooser();
 
-      G_chooser->directory(".");                                // directory to start browsing with
-        G_chooser->preset_file("config_file.txt");   // file to start with
+      G_chooser->directory("/config_file/");                                // directory to start browsing with
+        G_chooser->preset_file("config_file/config_file.txt");   // file to start with
         G_chooser->filter("text\\t*.{txt}\\n log\\t*.{log}\\n");
         G_chooser->type(Fl_Native_File_Chooser::BROWSE_FILE);     // only picks files that exist
         G_chooser->title("Selectionner le fichier de configuration...");  
@@ -957,7 +957,7 @@ Fl_Native_File_Chooser *G_chooser = new Fl_Native_File_Chooser();
       fprintf(stderr, "DIRECTORY: '%s'\\n", G_chooser->directory());
       fprintf(stderr, " FILENAME: '%s'\\n", G_chooser->filename());
       fprintf(stderr, "    value: '%d'\\n", i);
-      fprintf(stderr, "--------------------\\n");}
+      fprintf(stderr, "--------------------\\n");} selected
               xywh {450 84 19 20} labelsize 10
             }
             Fl_Input log_file {
@@ -971,9 +971,9 @@ Fl_Native_File_Chooser *G_chooser = new Fl_Native_File_Chooser();
 
 Fl_Native_File_Chooser *G_chooser = new Fl_Native_File_Chooser();
 
-      G_chooser->directory(".");                                // directory to start browsing with
-        G_chooser->preset_file("log_file.log");   // file to start with
-        G_chooser->filter("text\\t*.{txt}\\nlog\\t*.{log}\\n");
+      G_chooser->directory("/log_file/");                                // directory to start browsing with
+        G_chooser->preset_file("log_file/log_file.log");   // file to start with
+        G_chooser->filter("Log Files\\t*.{log}\\nText Files\\t*.{txt}\\n");
         G_chooser->type(Fl_Native_File_Chooser::BROWSE_FILE);     // only picks files that exist
         G_chooser->title("Selectionner le fichier de configuration...");  
 
@@ -1056,7 +1056,7 @@ SlicerPage3->slider_phase->do_callback();}
 SlicerPage4->slider_freq->do_callback();
 SlicerPage4->slider_amp->do_callback();
 SlicerPage4->slider_phase->do_callback();}
-          xywh {5 25 470 215} box THIN_UP_BOX labeltype NO_LABEL labelsize 12
+          xywh {5 25 470 215} box THIN_UP_BOX labeltype NO_LABEL labelsize 12 hide
           class Slicer_Page
         } {}
       }

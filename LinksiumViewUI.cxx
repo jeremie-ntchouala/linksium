@@ -384,25 +384,24 @@ Slicer_Page::Slicer_Page(int X, int Y, int W, int H, const char *L) :
     input_pid_group->labeltype(FL_NO_LABEL);
     input_pid_group->labelsize(10);
     input_pid_group->align(Fl_Align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE));
-    input_pid_group->hide();
     { Fl_Group* o = new Fl_Group(45, 5, 325, 30, "RAMP:");
       o->labelsize(10);
       o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
-      { Fl_Value_Input* o = new Fl_Value_Input(88, 17, 79, 17, "Min:");
+      { Fl_Value_Input* o = new Fl_Value_Input(88, 17, 60, 17, "Min:");
         o->labelsize(10);
         o->minimum(-10);
         o->maximum(10);
         o->textsize(10);
         o->align(Fl_Align(FL_ALIGN_TOP));
       } // Fl_Value_Input* o
-      { Fl_Value_Input* o = new Fl_Value_Input(187, 17, 79, 17, "Max:");
+      { Fl_Value_Input* o = new Fl_Value_Input(160, 17, 60, 17, "Max:");
         o->labelsize(10);
         o->minimum(-10);
         o->maximum(10);
         o->textsize(10);
         o->align(Fl_Align(FL_ALIGN_TOP));
       } // Fl_Value_Input* o
-      { Fl_Value_Input* o = new Fl_Value_Input(287, 17, 79, 17, "Speed:");
+      { Fl_Value_Input* o = new Fl_Value_Input(232, 17, 60, 17, "Speed:");
         o->labelsize(10);
         o->minimum(-10);
         o->maximum(10);
@@ -414,21 +413,21 @@ Slicer_Page::Slicer_Page(int X, int Y, int W, int H, const char *L) :
     { Fl_Group* o = new Fl_Group(45, 37, 325, 30, "PID 1:");
       o->labelsize(10);
       o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
-      { pid1_p = new Fl_Value_Input(88, 50, 79, 17, "P:");
+      { pid1_p = new Fl_Value_Input(88, 50, 60, 17, "P:");
         pid1_p->labelsize(10);
         pid1_p->minimum(-100);
         pid1_p->maximum(100);
         pid1_p->textsize(10);
         pid1_p->align(Fl_Align(FL_ALIGN_TOP));
       } // Fl_Value_Input* pid1_p
-      { pid1_i = new Fl_Value_Input(187, 50, 79, 17, "I:");
+      { pid1_i = new Fl_Value_Input(160, 50, 60, 17, "I:");
         pid1_i->labelsize(10);
         pid1_i->minimum(-100);
         pid1_i->maximum(100);
         pid1_i->textsize(10);
         pid1_i->align(Fl_Align(FL_ALIGN_TOP));
       } // Fl_Value_Input* pid1_i
-      { pid1_d = new Fl_Value_Input(287, 50, 79, 17, "D:");
+      { pid1_d = new Fl_Value_Input(232, 50, 60, 17, "D:");
         pid1_d->labelsize(10);
         pid1_d->minimum(-100);
         pid1_d->maximum(100);
@@ -440,20 +439,20 @@ Slicer_Page::Slicer_Page(int X, int Y, int W, int H, const char *L) :
     { Fl_Group* o = new Fl_Group(45, 69, 325, 31, "PID 2:");
       o->labelsize(10);
       o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
-      { pid2_p = new Fl_Value_Input(88, 83, 79, 17, "P:");
+      { pid2_p = new Fl_Value_Input(88, 83, 60, 17, "P:");
         pid2_p->labelsize(10);
         pid2_p->minimum(-100);
         pid2_p->maximum(100);
         pid2_p->textsize(10);
         pid2_p->align(Fl_Align(FL_ALIGN_TOP));
       } // Fl_Value_Input* pid2_p
-      { pid2_i = new Fl_Value_Input(187, 83, 79, 17, "I:");
+      { pid2_i = new Fl_Value_Input(160, 83, 60, 17, "I:");
         pid2_i->labelsize(10);
         pid2_i->maximum(10);
         pid2_i->textsize(10);
         pid2_i->align(Fl_Align(FL_ALIGN_TOP));
       } // Fl_Value_Input* pid2_i
-      { pid2_d = new Fl_Value_Input(287, 83, 79, 17, "D:");
+      { pid2_d = new Fl_Value_Input(232, 83, 60, 17, "D:");
         pid2_d->labelsize(10);
         pid2_d->maximum(10);
         pid2_d->textsize(10);
@@ -468,6 +467,7 @@ Slicer_Page::Slicer_Page(int X, int Y, int W, int H, const char *L) :
     input_slide_group->labeltype(FL_NO_LABEL);
     input_slide_group->labelsize(10);
     input_slide_group->align(Fl_Align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE));
+    input_slide_group->hide();
     { Fl_Group* o = new Fl_Group(45, 4, 325, 32, "frequence");
       o->labeltype(FL_NO_LABEL);
       o->labelsize(10);
@@ -1024,8 +1024,8 @@ void LinksiumViewUI::cb__i(Fl_Button*, void* v) {
 
   Fl_Native_File_Chooser *G_chooser = new Fl_Native_File_Chooser();
 
-        G_chooser->directory(".");                                // directory to start browsing with
-          G_chooser->preset_file("config_file.txt");   // file to start with
+        G_chooser->directory("/config_file/");                                // directory to start browsing with
+          G_chooser->preset_file("config_file/config_file.txt");   // file to start with
           G_chooser->filter("text\t*.{txt}\n log\t*.{log}\n");
           G_chooser->type(Fl_Native_File_Chooser::BROWSE_FILE);     // only picks files that exist
           G_chooser->title("Selectionner le fichier de configuration...");  
@@ -1055,9 +1055,9 @@ void LinksiumViewUI::cb_1_i(Fl_Button*, void* v) {
 
   Fl_Native_File_Chooser *G_chooser = new Fl_Native_File_Chooser();
 
-        G_chooser->directory(".");                                // directory to start browsing with
-          G_chooser->preset_file("log_file.log");   // file to start with
-          G_chooser->filter("text\t*.{txt}\nlog\t*.{log}\n");
+        G_chooser->directory("/log_file/");                                // directory to start browsing with
+          G_chooser->preset_file("log_file/log_file.log");   // file to start with
+          G_chooser->filter("Log Files\t*.{log}\nText Files\t*.{txt}\n");
           G_chooser->type(Fl_Native_File_Chooser::BROWSE_FILE);     // only picks files that exist
           G_chooser->title("Selectionner le fichier de configuration...");  
 
@@ -1155,7 +1155,6 @@ LinksiumViewUI::LinksiumViewUI() {
         ConfigPage->box(FL_THIN_UP_BOX);
         ConfigPage->labeltype(FL_NO_LABEL);
         ConfigPage->labelsize(12);
-        ConfigPage->hide();
         { Fl_Group* o = new Fl_Group(10, 45, 460, 165, "Config Preferences");
           o->labeltype(FL_NO_LABEL);
           o->labelsize(10);
@@ -1272,6 +1271,7 @@ LinksiumViewUI::LinksiumViewUI() {
         SlicerPage4->callback((Fl_Callback*)cb_SlicerPage4);
         SlicerPage4->align(Fl_Align(FL_ALIGN_TOP));
         SlicerPage4->when(FL_WHEN_RELEASE);
+        SlicerPage4->hide();
         SlicerPage4->end();
       } // Slicer_Page* SlicerPage4
       categorie->end();
