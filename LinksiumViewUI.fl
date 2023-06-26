@@ -1,0 +1,1195 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0400
+use_FL_COMMAND
+utf8_in_src
+avoid_early_includes
+header_name {.h}
+code_name {.cxx}
+snap {
+  ver 1
+  current_suite FLTK
+  current_preset 0
+}
+decl {\#include <iostream>} {private local
+}
+
+decl {\#include <stdlib.h>} {private local
+}
+
+decl {\#include <stdio.h>} {private local
+}
+
+decl {\#include <cstring>} {private local
+}
+
+decl {\#include <string>} {private local
+}
+
+decl {\#include <thread>} {private local
+}
+
+decl {\#include <unistd.h>} {private local
+}
+
+decl {\#include <FL/fl_ask.H>} {public local
+}
+
+decl {\#include <FL/Fl_Choice.H>} {public local
+}
+
+decl {\#include <FL/Fl_File_Chooser.H>} {public local
+}
+
+decl {\#include <FL/Fl_Native_File_Chooser.H>} {public local
+}
+
+decl {\#include "ftd2xx.h"} {public local
+}
+
+decl {\#include "WinTypes.h"} {private local
+}
+
+decl {\#include "config_ftdi.h"} {public local
+}
+
+decl {const char* freq_name_unit[12]    = { "2.6 KHz", "3.9 KHz", "5.2 KHz", "7.8 KHz", "10.4 KHz", "15.6 KHz", "20.8 KHz", "31.3 KHz", "41.7 KHz", "62.5 KHz", "83.3 KHz", "125.0 KHz"} ;} {private global
+}
+
+decl {DWORD 	dwBytesWritten, dwBytesRead;} {private global
+}
+
+decl {char version_revision[32] = "";} {private local
+}
+
+decl {using namespace std;} {private local
+}
+
+decl {FT_STATUS ftStatus;} {public local
+}
+
+decl {FT_STATUS device_status;} {public local
+}
+
+decl {FT_HANDLE ftHandle0;} {public local
+}
+
+class Msg {
+  comment {ftdi_trame message}
+} {
+  decl {unsigned char buff[13] = {'\\0'};} {public local
+  }
+  decl {t_msg_type type;} {public local
+  }
+  decl {unsigned int sliceId;} {public local
+  }
+  decl {bool withChecksum;} {public local
+  }
+  decl {unsigned int systemId;} {public local
+  }
+  decl {unsigned int hw_ver;} {public local
+  }
+  decl {unsigned int hw_rev;} {public local
+  }
+  decl {unsigned int sw_ver;} {public local
+  }
+  decl {unsigned int sw_rev;} {public local
+  }
+  decl {unsigned int dbg_slice;} {public local
+  }
+  decl {unsigned int dbg_signals;} {public local
+  }
+  decl {unsigned int ac_phase_initiale;} {public local
+  }
+  decl {unsigned int ac_amplitude;} {public local
+  }
+  decl {unsigned int ac_frequence;} {public local
+  }
+  decl {int ac_phase;} {public local
+  }
+  decl {const int msglen[17] = {3, 2, 4, 4, 7, 7, 10, 10, 6, 6, 9, 1, 13, 4, 4, 4, 3};} {private local
+  }
+  decl {int _len;} {private local
+  }
+  Function {Msg()} {} {
+    code {printf("Hello, World!\\n");} {}
+  }
+  Function {len()} {return_type int
+  } {
+    code {return msglen[(int)type];} {}
+  }
+  Function {xBuff(bool bCmd = false)} {return_type int
+  } {
+    code {if ((type & 0x01) || (bCmd))
+{ // write message
+    buff[0] = ((systemId & 0x01) << 7) | ((sliceId & 0x03) << 5) | ((withChecksum & 0x10) << 4) | (type & 0x0F);
+}
+
+else
+{ // read message
+    type         = (t_msg_type)(buff[0] & 0x0F);
+    withChecksum = (buff[0] & 0x10) ? true : false;
+    sliceId      = (buff[0] & 0x60) >> 5;
+    systemId     = (buff[0] & 0x80) >> 7;
+}
+
+switch (type)
+{
+case MSG_TYPE_VERSION_RD: 
+    hw_ver = (buff[1] & 0xF0) >> 4;
+    hw_rev = (buff[1] & 0x0F);
+    sw_ver = (buff[2] & 0xF0) >> 4;
+    sw_rev = (buff[2] & 0x0F);
+    break;
+
+case MSG_TYPE_DEBUG_CFG_WR: 
+    buff[1] = (dbg_slice & 0x0003) << 6 | (dbg_signals & 0x03F);
+    break;
+
+case MSG_TYPE_CONFIG_AC_RD: 
+    ac_phase_initiale = (buff[1] & 0x80) >> 7;
+    ac_amplitude      = (buff[1] & 0x7F);
+    ac_frequence      = ((buff[2] & 0xF0) >> 4);
+    ac_phase          = (buff[2] & 0x07) * 256 | ((buff[3] & 0xFF)) - ((buff[2] & 0x04) ? 2048 : 0);
+    break;
+
+case MSG_TYPE_CONFIG_AC_WR: 
+    buff[1] = (ac_phase_initiale & 0x0001) << 7 | (ac_amplitude & 0x007F);
+    buff[2] = (ac_frequence & 0x000F) << 4 | ((ac_phase & 0x0700) >> 8);
+    buff[3] = (ac_phase & 0x00FF);
+    break;
+
+case MSG_TYPE_CONFIG_PID_ONE_RD: 
+case MSG_TYPE_CONFIG_PID_ONE_WR: 
+case MSG_TYPE_CONFIG_LOCKIN_RD : 
+case MSG_TYPE_CONFIG_LOCKIN_WR : 
+case MSG_TYPE_CONFIG_PID_TWO_RD: 
+case MSG_TYPE_CONFIG_PID_TWO_WR: 
+case MSG_TYPE_DAC_OUT_RD       : 
+case MSG_TYPE_LED_STATUS       : 
+case MSG_TYPE_RUN_TEST         : 
+case MSG_TYPE_7_WR             : 
+case MSG_TYPE_8_RD             : 
+case MSG_TYPE_8_WR             : 
+    return -2;
+    break;
+
+default: 
+    return -1;
+    break;
+}
+return 0;} {}
+  }
+  Function {version_rd()} {open
+  } {}
+  Function {debug_cfg_wr()} {open
+  } {}
+  Function {config_ac_rd()} {open
+  } {}
+  Function {config_ac_wr()} {open
+  } {}
+  Function {clear_buff()} {open
+  } {
+    code {std::fill_n(buff, sizeof(buff), 0);} {}
+  }
+  Function {print_buff(const char *title = "Buffer_data")} {open
+  } {
+    code {printf("%s[%ld] = ", title, sizeof(buff));
+for (int i = 0; i < sizeof(buff); i++)
+{
+	printf(" \\\\x%02X", buff[i]);
+}
+printf("\\n");} {}
+  }
+  Function {print_buff_container()} {} {}
+}
+
+decl {Msg myMsg;} {public local
+}
+
+widget_class Slice_Output_Data {
+  comment Slice_Input_Data_group
+  xywh {1882 506 395 17} labelsize 10 align 0 hide size_range {395 17 395 17} position_relative
+} {
+  Fl_Progress ac_in_data {
+    xywh {49 0 70 17} labelsize 10 when 1
+    code0 {ac_in_data->value(13);}
+  }
+  Fl_Progress dc_in_data {
+    xywh {122 0 70 17} labelsize 10 when 1
+    code0 {dc_in_data->minimum(-10); dc_in_data->maximum(10);}
+    code1 {dc_in_data->value(0);}
+  }
+  Fl_Progress dc_out_data {
+    xywh {195 0 70 17} labelsize 10 when 1
+    code0 {dc_out_data->minimum(-10); dc_out_data->maximum(10);}
+    code1 {dc_out_data->value(0);}
+  }
+  Fl_Box run_state {
+    label { }
+    xywh {277 0 17 17} box ROUND_UP_BOX labeltype NO_LABEL labelsize 10 align 16
+  }
+  Fl_Box lock_rmp_state {
+    xywh {308 0 17 17} box ROUND_UP_BOX labeltype NO_LABEL labelsize 10 align 16
+  }
+  Fl_Box ovfl_state {
+    xywh {340 0 17 17} box ROUND_UP_BOX labeltype NO_LABEL labelsize 10 align 16
+  }
+  Fl_Box calib_state {
+    label label
+    xywh {370 0 17 17} box ROUND_UP_BOX labeltype NO_LABEL labelsize 10 align 16
+  }
+}
+
+comment {
+//
+// SliderInputGroup, ShortDescription
+// Copyright (C) YYYY  NameOfAuthor
+//} {in_source in_header
+}
+
+widget_class Slider_Input_Button {
+  label slider_button
+  comment Fl_Slider_Input_Button
+  xywh {1877 89 420 30} labelsize 10 hide resizable size_range {460 30 460 30} position_relative_rescale
+} {
+  Fl_Button decrease_data {
+    label {@<}
+    callback {slider_data->value( ((slider_data->value() <= slider_data->minimum() ) ?  0 : (slider_data->value() - slider_data->step()) ));
+slider_data->do_callback();}
+    xywh {7 10 15 15} labelsize 10 align 16
+  }
+  Fl_Slider slider_data {
+    label {slider:}
+    callback {char buff[128];
+sprintf(buff,"%s [%d]", freq_name_unit[(int)slider_data->value()],(int)slider_data->value());
+input_data->value(buff);}
+    xywh {23 10 290 15} type Horizontal box THIN_DOWN_BOX labeltype NO_LABEL labelsize 10 align 16 maximum 100 step 1 value 50
+    code0 {slider_data->bounds(0, 11); slider_data->value(0);}
+  }
+  Fl_Button increase_data {
+    label {@>}
+    callback {slider_data->value( ((slider_data->value() >= slider_data->maximum() ) ?  0 : (slider_data->value() + slider_data->step()) ));
+slider_data->do_callback();}
+    xywh {314 10 15 15} labelsize 10 align 16
+  }
+  Fl_Input input_data {
+    label {Frequence (KHz)}
+    callback {char buff[128];
+sprintf(buff,"%s [%d]", freq_name_unit[(int)slider_data->value()],(int)slider_data->value());
+input_data->value(buff);}
+    xywh {340 10 80 17} type Float labelsize 10 align 1 when 10 textsize 11
+  }
+}
+
+comment {
+//
+// Fl_Slicer_page, ShortDescription
+// Copyright (C) YYYY  NameOfAuthor
+//} {in_source in_header
+}
+
+widget_class Slicer_Page {open
+  xywh {893 306 470 215} labelsize 10 align 80 hide size_range {470 215 470 215} position_relative
+} {
+  Fl_Group {} {
+    label input_ramp open
+    xywh {5 5 460 100} labeltype NO_LABEL labelsize 10 align 16
+  } {
+    Fl_Button ramp_pid {
+      label {RMP
+PID}
+      callback {ramp_pid->deactivate();
+if( "RMP\\nPID" == ramp_pid->label()){
+    ramp_pid->label("SIG\\nNAL");
+    input_slide_group->hide();
+    input_pid_group->show();
+
+}else {
+    ramp_pid->label("RMP\\nPID");
+    input_slide_group->show();
+    input_pid_group->hide();
+     
+}
+ramp_pid->activate();}
+      xywh {5 5 35 35} down_box DOWN_BOX selection_color 45 labelsize 9
+    }
+    Fl_Button ac_phase_init {
+      label {INIT
+PHASE}
+      xywh {5 64 35 35} type Toggle down_box DOWN_BOX selection_color 45 labelsize 9
+    }
+  }
+  Fl_Group input_pid_group {
+    label input_pid_group
+    xywh {45 2 325 100} color 55 labeltype NO_LABEL labelsize 10 align 16 hide
+  } {
+    Fl_Group {} {
+      label {RAMP:} open
+      xywh {45 5 325 30} labelsize 10 align 20
+    } {
+      Fl_Value_Input {} {
+        label {Min:}
+        xywh {88 17 79 17} labelsize 10 align 1 minimum -10 maximum 10 textsize 10
+      }
+      Fl_Value_Input {} {
+        label {Max:}
+        xywh {187 17 79 17} labelsize 10 align 1 minimum -10 maximum 10 textsize 10
+      }
+      Fl_Value_Input {} {
+        label {Speed:}
+        xywh {287 17 79 17} labelsize 10 align 1 minimum -10 maximum 10 textsize 10
+      }
+    }
+    Fl_Group {} {
+      label {PID 1:} open
+      xywh {45 37 325 30} labelsize 10 align 20
+    } {
+      Fl_Value_Input pid1_p {
+        label {P:}
+        xywh {88 50 79 17} labelsize 10 align 1 minimum -100 maximum 100 textsize 10
+      }
+      Fl_Value_Input pid1_i {
+        label {I:}
+        xywh {187 50 79 17} labelsize 10 align 1 minimum -100 maximum 100 textsize 10
+      }
+      Fl_Value_Input pid1_d {
+        label {D:}
+        xywh {287 50 79 17} labelsize 10 align 1 minimum -100 maximum 100 textsize 10
+      }
+    }
+    Fl_Group {} {
+      label {PID 2:} open
+      xywh {45 69 325 31} labelsize 10 align 20
+    } {
+      Fl_Value_Input pid2_p {
+        label {P:}
+        xywh {88 83 79 17} labelsize 10 align 1 minimum -100 maximum 100 textsize 10
+      }
+      Fl_Value_Input pid2_i {
+        label {I:}
+        xywh {187 83 79 17} labelsize 10 align 1 maximum 10 textsize 10
+      }
+      Fl_Value_Input pid2_d {
+        label {D:}
+        xywh {287 83 79 17} labelsize 10 align 1 maximum 10 textsize 10
+      }
+    }
+  }
+  Fl_Group input_slide_group {
+    label input_slide_group open
+    xywh {45 2 325 100} color 55 labeltype NO_LABEL labelsize 10 align 16
+  } {
+    Fl_Group {} {
+      label frequence open
+      xywh {45 4 325 32} labeltype NO_LABEL labelsize 10 align 20
+    } {
+      Fl_Group {} {open
+        xywh {45 20 324 15} labeltype NO_LABEL align 16
+      } {
+        Fl_Button decrease_freq {
+          label {@<}
+          callback {slider_freq->value( ((slider_freq->value() <= slider_freq->minimum() ) ?  0 : (slider_freq->value() - slider_freq->step()) ));
+slider_freq->do_callback();}
+          xywh {46 20 15 15} labelsize 10 align 16
+        }
+        Fl_Slider slider_freq {
+          label {slider:}
+          callback {char buff[32];
+sprintf(buff,"%s [%d]", freq_name_unit[(int)slider_freq->value()],(int)slider_freq->value());
+input_freq->value(buff);
+
+myMsg.systemId     = 0;
+//myMsg.sliceId      = 0;
+myMsg.withChecksum = false;
+myMsg.type         = MSG_TYPE_CONFIG_AC_WR;
+
+myMsg.ac_frequence = (int)slider_freq->value();
+myMsg.xBuff();
+ftStatus = FT_Write(ftHandle0, myMsg.buff, myMsg.len(), &dwBytesWritten);}
+          xywh {62 20 290 15} type Horizontal box THIN_DOWN_BOX labeltype NO_LABEL labelsize 10 align 16 maximum 11 step 1
+        }
+        Fl_Button increase_freq {
+          label {@>}
+          callback {slider_freq->value( ((slider_freq->value() >= slider_freq->maximum() ) ?  slider_freq->maximum() : (slider_freq->value() + slider_freq->step()) ));
+slider_freq->do_callback();}
+          xywh {353 20 15 15} labelsize 10 align 16
+        }
+      }
+      Fl_Group {} {
+        xywh {59 7 296 15}
+      } {
+        Fl_Box {} {
+          label {2.6
+|}
+          xywh {59 7 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {3.9
+|}
+          xywh {84 7 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {5.2
+|}
+          xywh {109 7 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {7.8
+|}
+          xywh {136 7 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {10.4
+|}
+          xywh {161 7 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {15.6
+|}
+          xywh {187 7 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {20.8
+|}
+          xywh {212 7 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {31.2
+|}
+          xywh {237 7 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {41.7
+|}
+          xywh {263 7 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {62.5
+|}
+          xywh {288 7 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {83.4
+|}
+          xywh {313 7 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {125
+|}
+          xywh {340 7 15 15} labelsize 7
+        }
+      }
+    }
+    Fl_Group {} {
+      label amplitude open
+      xywh {45 39 325 28} labeltype NO_LABEL labelsize 10 align 20
+    } {
+      Fl_Group {} {open
+        xywh {45 52 324 15} labeltype NO_LABEL align 16
+      } {
+        Fl_Button decrease_amp {
+          label {@<}
+          callback {slider_amp->value( ((slider_amp->value() <= slider_amp->minimum() ) ?  0 : (slider_amp->value() - slider_amp->step()) ));
+slider_amp->do_callback();}
+          xywh {46 52 15 15} labelsize 10 align 16
+        }
+        Fl_Slider slider_amp {
+          label {slider:}
+          callback {char buff[32];
+sprintf(buff,"%.1f mVpk [%d]", (100 * (slider_amp->value() / slider_amp->maximum())),(int)slider_amp->value());
+input_amp->value(buff);
+
+myMsg.systemId     = 0;
+//myMsg.sliceId      = 0;
+myMsg.withChecksum = false;
+myMsg.type         = MSG_TYPE_CONFIG_AC_WR;
+
+myMsg.ac_amplitude = (int)slider_amp->value();
+myMsg.xBuff();
+ftStatus = FT_Write(ftHandle0, myMsg.buff, myMsg.len(), &dwBytesWritten);}
+          xywh {62 52 290 15} type Horizontal box THIN_DOWN_BOX labeltype NO_LABEL labelsize 10 align 16 maximum 128 step 1
+        }
+        Fl_Button increase_amp {
+          label {@>}
+          callback {slider_amp->value( ((slider_amp->value() >= slider_amp->maximum() ) ?  slider_amp->maximum() : (slider_amp->value() + slider_amp->step()) ));
+slider_amp->do_callback();}
+          xywh {353 52 15 15} labelsize 10 align 16
+        }
+      }
+      Fl_Group {} {
+        xywh {59 39 296 15}
+      } {
+        Fl_Box {} {
+          label {0
+|}
+          xywh {59 39 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {7
+|}
+          xywh {79 39 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {13
+|}
+          xywh {95 39 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {18
+|}
+          xywh {109 39 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {23
+|}
+          xywh {131 39 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {30
+|}
+          xywh {149 39 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {39
+|}
+          xywh {169 39 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {44.5
+|}
+          xywh {184 39 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {50
+|}
+          xywh {200 39 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {58
+|}
+          xywh {222 39 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {65
+|}
+          xywh {243 39 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {72
+|}
+          xywh {261 39 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {79
+|}
+          xywh {281 39 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {86
+|}
+          xywh {301 39 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {93
+|}
+          xywh {319 39 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {100
+|}
+          xywh {340 39 15 15} labelsize 7
+        }
+      }
+    }
+    Fl_Group {} {
+      label phase open
+      xywh {45 71 325 28} labeltype NO_LABEL labelsize 10 align 20
+    } {
+      Fl_Group {} {open
+        xywh {45 84 324 15} labeltype NO_LABEL align 16
+      } {
+        Fl_Button decrease_phase {
+          label {@<}
+          callback {slider_phase->value( ((slider_phase->value() <= slider_phase->minimum() ) ?  0 : (slider_phase->value() - slider_phase->step()) ));
+slider_phase->do_callback();}
+          xywh {46 84 15 15} labelsize 10 align 16
+        }
+        Fl_Slider slider_phase {
+          label {slider:}
+          callback {char buff[32];
+sprintf(buff,"%.1f deg [%d]", (-180.0 + (360.0 / slider_phase->maximum()) * slider_phase->value()),(int)slider_phase->value());
+input_phase->value(buff);
+
+myMsg.systemId     = 0;
+// myMsg.sliceId      = 0;
+myMsg.withChecksum = false;
+myMsg.type         = MSG_TYPE_CONFIG_AC_WR;
+
+myMsg.ac_phase_initiale = (int)ac_phase_init->value();
+myMsg.ac_phase = (int)slider_phase->value();
+myMsg.xBuff();
+ftStatus = FT_Write(ftHandle0, myMsg.buff, myMsg.len(), &dwBytesWritten);}
+          xywh {62 84 290 15} type Horizontal box THIN_DOWN_BOX labeltype NO_LABEL labelsize 10 align 16 maximum 1024 step 1 value 512
+        }
+        Fl_Button increase_phase {
+          label {@>}
+          callback {slider_phase->value( ((slider_phase->value() >= slider_phase->maximum() ) ?  slider_phase->maximum() : (slider_phase->value() + slider_phase->step()) ));
+slider_phase->do_callback();}
+          xywh {353 84 15 15} labelsize 10 align 16
+        }
+      }
+      Fl_Group {} {
+        xywh {59 71 296 15}
+      } {
+        Fl_Box {} {
+          label {-180
+|}
+          xywh {59 71 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {
+|}
+          xywh {76 71 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {-135
+|}
+          xywh {94 71 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {
+|}
+          xywh {111 71 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {-90
+|}
+          xywh {129 71 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {
+|}
+          xywh {146 71 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {-45
+|}
+          xywh {163 71 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {
+|}
+          xywh {182 71 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {0
+|}
+          xywh {200 71 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {
+|}
+          xywh {218 71 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {45
+|}
+          xywh {235 71 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {
+|}
+          xywh {253 71 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {90
+|}
+          xywh {270 71 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {
+|}
+          xywh {287 71 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {135
+|}
+          xywh {304 71 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {
+|}
+          xywh {323 71 15 15} labelsize 7
+        }
+        Fl_Box {} {
+          label {180
+|}
+          xywh {340 71 15 15} labelsize 7
+        }
+      }
+    }
+  }
+  Fl_Group {} {
+    label ouput_slice_group
+    xywh {5 110 460 100} labeltype NO_LABEL labelsize 10 align 16
+  } {
+    Fl_Group {} {
+      label output_title_group
+      xywh {137 111 327 25} labeltype NO_LABEL labelsize 10 align 16
+    } {
+      Fl_Box {} {
+        label {AC In
+Level}
+        xywh {137 111 30 25} labelsize 10
+      }
+      Fl_Box {} {
+        label {DC In
+Offset}
+        xywh {209 111 30 25} labelsize 10
+      }
+      Fl_Box {} {
+        label {DC Out
+Offset}
+        xywh {281 111 30 25} labelsize 10
+      }
+      Fl_Box {} {
+        label {
+RUN}
+        xywh {341 111 30 25} labelsize 10
+      }
+      Fl_Box {} {
+        label {LOCK/RMP
+|}
+        xywh {372 111 30 25} labelsize 10
+      }
+      Fl_Box {} {
+        label {
+OVFL}
+        xywh {403 111 30 25} labelsize 10
+      }
+      Fl_Box {} {
+        label {CALIB
+|}
+        xywh {434 111 30 25} labelsize 10
+      }
+    }
+    Fl_Group Slice1 {
+      label Slice1
+      xywh {70 137 395 17} labelsize 11 align 20
+      class Slice_Output_Data
+    } {}
+    Fl_Group Slice2 {
+      label Slice2
+      xywh {70 156 395 17} labelsize 11 align 20
+      class Slice_Output_Data
+    } {}
+    Fl_Group Slice3 {
+      label Slice3
+      xywh {70 175 395 17} labelsize 11 align 20
+      class Slice_Output_Data
+    } {}
+    Fl_Group Slice4 {
+      label Slice4
+      xywh {70 193 395 17} labelsize 11 align 20
+      class Slice_Output_Data
+    } {}
+  }
+  Fl_Box {} {
+    label divider_line
+    xywh {0 105 470 3} box ENGRAVED_BOX labeltype NO_LABEL labelsize 10
+  }
+  Fl_Group {} {
+    label out_slide
+    xywh {370 6 95 96} labeltype NO_LABEL labelsize 10 align 16
+  } {
+    Fl_Input input_freq {
+      label {Frequence (KHz)}
+      xywh {370 17 95 17} type Float labelsize 9 align 5 textsize 10
+    }
+    Fl_Input input_amp {
+      label {Amplitude (mVpk)}
+      xywh {370 50 95 17} type Float labelsize 9 align 5 textsize 10
+    }
+    Fl_Input input_phase {
+      label {Phase (deg)}
+      xywh {370 82 95 17} type Float labelsize 9 align 5 textsize 10
+    }
+  }
+  code {slider_freq->do_callback();
+slider_amp->do_callback();
+slider_phase->do_callback();} {}
+}
+
+comment {
+//
+// NameOfProgram, ShortDescription
+// Copyright (C) YYYY  NameOfAuthor
+//} {in_source in_header
+}
+
+class LinksiumViewUI {open
+} {
+  Function {LinksiumViewUI()} {open
+  } {
+    Fl_Window mainWindow {
+      label Linksium_3QUB open
+      private xywh {578 101 480 272} type Double labelsize 12 align 80 when 0 size_range {480 272 480 272} visible
+    } {
+      Fl_Group TitleApp {
+        image {title_image.png} compress_image 1 bind_image 1 xywh {275 0 200 24} labeltype NO_LABEL labelfont 1 labelsize 16 align 536
+      } {}
+      Fl_Tabs {} {
+        label Categorie
+        callback {printf("\\nval tab\\n");} open
+        xywh {5 5 470 236} selection_color 45 labeltype NO_LABEL
+      } {
+        Fl_Group ConfigPage {
+          label Config open
+          xywh {5 25 470 215} box THIN_UP_BOX labeltype NO_LABEL labelsize 12 hide
+        } {
+          Fl_Group {} {
+            label {Config Preferences}
+            xywh {10 45 460 165} labeltype NO_LABEL labelsize 10 align 17
+          } {
+            Fl_Choice config_choice {
+              label {Config:}
+              xywh {77 50 90 20} down_box BORDER_BOX labelsize 10 textsize 10
+            } {
+              MenuItem {} {
+                label basic
+                user_data 0 user_data_type long
+                xywh {0 0 30 15} labelsize 9
+              }
+              MenuItem {} {
+                label plastic
+                user_data 1 user_data_type long
+                xywh {0 0 30 15} labelsize 9
+              }
+              MenuItem {} {
+                label {gtk+}
+                user_data 2 user_data_type long
+                xywh {0 0 30 15} labelsize 9
+              }
+              MenuItem {} {
+                label gleam
+                user_data 3 user_data_type long
+                xywh {0 0 30 15} labelsize 9
+              }
+              MenuItem {} {
+                label oxy
+                user_data 4 user_data_type long
+                xywh {0 0 30 15} labelsize 9
+              }
+            }
+            Fl_Choice scheme_choice {
+              label {Scheme:}
+              callback {Fl::scheme(scheme_choice->text(scheme_choice->value()));}
+              xywh {228 50 90 20} down_box BORDER_BOX labelsize 10 textsize 10
+              code0 {scheme_choice->value(2);}
+              code1 {scheme_choice->do_callback();}
+            } {
+              MenuItem {} {
+                label basic
+                user_data 0 user_data_type long
+                xywh {0 0 30 15} labelsize 9
+              }
+              MenuItem {} {
+                label plastic
+                user_data 1 user_data_type long
+                xywh {0 0 30 15} labelsize 9
+              }
+              MenuItem {} {
+                label {gtk+}
+                user_data 2 user_data_type long
+                xywh {0 0 30 15} labelsize 9
+              }
+              MenuItem {} {
+                label gleam
+                user_data 3 user_data_type long
+                xywh {0 0 30 15} labelsize 9
+              }
+              MenuItem {} {
+                label oxy
+                user_data 4 user_data_type long
+                xywh {0 0 30 15} labelsize 9
+              }
+            }
+            Fl_Choice color_theme {
+              label {Color:}
+              xywh {379 50 90 20} down_box BORDER_BOX labelsize 10 textsize 10
+            } {
+              MenuItem {} {
+                label light
+                xywh {0 0 27 16} labelsize 10
+              }
+              MenuItem {} {
+                label dark
+                xywh {0 0 27 16} labelsize 10
+              }
+            }
+            Fl_Input config_file {
+              label {Config File:}
+              xywh {77 84 370 20} labelsize 10 textsize 10
+            }
+            Fl_Button {} {
+              label {...}
+              callback {int i = (int)(fl_intptr_t)v;
+
+
+Fl_Native_File_Chooser *G_chooser = new Fl_Native_File_Chooser();
+
+      G_chooser->directory(".");                                // directory to start browsing with
+        G_chooser->preset_file("config_file.txt");   // file to start with
+        G_chooser->filter("text\\t*.{txt}\\n log\\t*.{log}\\n");
+        G_chooser->type(Fl_Native_File_Chooser::BROWSE_FILE);     // only picks files that exist
+        G_chooser->title("Selectionner le fichier de configuration...");  
+
+      switch ( G_chooser->show() ) {
+        case -1: break;   // Error
+        case  1: break;   // Cancel
+        default:          // Choice
+          G_chooser->preset_file(G_chooser->filename());
+          config_file->value(G_chooser->filename());
+          fl_message("You chose: %s", G_chooser->filename());
+          break;
+      }
+
+      fprintf(stderr, "DIRECTORY: '%s'\\n", G_chooser->directory());
+      fprintf(stderr, " FILENAME: '%s'\\n", G_chooser->filename());
+      fprintf(stderr, "    value: '%d'\\n", i);
+      fprintf(stderr, "--------------------\\n");}
+              xywh {450 84 19 20} labelsize 10
+            }
+            Fl_Input log_file {
+              label {Log File:}
+              xywh {77 112 370 20} labelsize 10 textsize 10
+            }
+            Fl_Button {} {
+              label {...}
+              callback {int i = (int)(fl_intptr_t)v;
+
+
+Fl_Native_File_Chooser *G_chooser = new Fl_Native_File_Chooser();
+
+      G_chooser->directory(".");                                // directory to start browsing with
+        G_chooser->preset_file("log_file.log");   // file to start with
+        G_chooser->filter("text\\t*.{txt}\\nlog\\t*.{log}\\n");
+        G_chooser->type(Fl_Native_File_Chooser::BROWSE_FILE);     // only picks files that exist
+        G_chooser->title("Selectionner le fichier de configuration...");  
+
+      switch ( G_chooser->show() ) {
+        case -1: break;   // Error
+        case  1: break;   // Cancel
+        default:          // Choice
+          G_chooser->preset_file(G_chooser->filename());
+          log_file->value(G_chooser->filename());
+          fl_message("You chose: %s \\nas log file", G_chooser->filename());
+          break;
+      }
+
+      fprintf(stderr, "DIRECTORY: '%s'\\n", G_chooser->directory());
+      fprintf(stderr, " FILENAME: '%s'\\n", G_chooser->filename());
+      fprintf(stderr, "    value: '%d'\\n", i);
+      fprintf(stderr, "--------------------\\n");}
+              xywh {450 112 20 20} labelsize 10
+            }
+          }
+          Fl_Group {} {
+            label Config_settings
+            xywh {10 215 460 20} labeltype NO_LABEL labelsize 10
+          } {
+            Fl_Button save_config {
+              label {&Save}
+              xywh {10 215 70 20} labelsize 10
+            }
+            Fl_Button reload_config {
+              label {&Reload}
+              xywh {85 215 70 20} labelsize 10
+            }
+            Fl_Button reset_config {
+              label {R&eset}
+              xywh {160 215 70 20} labelsize 10
+            }
+            Fl_Button exit_app {
+              label {&Exit}
+              callback {FT_Close(ftHandle0);
+exit(0);
+//delete this;}
+              xywh {400 215 70 20} labelsize 10
+            }
+          }
+        }
+        Fl_Group SlicerPage1 {
+          label {Slice 1}
+          callback {myMsg.sliceId      = 0;
+
+SlicerPage1->slider_freq->do_callback();
+SlicerPage1->slider_amp->do_callback();
+SlicerPage1->slider_phase->do_callback();}
+          xywh {5 25 470 215} box THIN_UP_BOX labeltype NO_LABEL labelsize 12 hide
+          class Slicer_Page
+        } {}
+        Fl_Group SlicerPage2 {
+          label {Slice 2}
+          callback {myMsg.sliceId      = 1;
+
+SlicerPage2->slider_freq->do_callback();
+SlicerPage2->slider_amp->do_callback();
+SlicerPage2->slider_phase->do_callback();}
+          xywh {5 25 470 215} box THIN_UP_BOX labeltype NO_LABEL labelsize 12 hide
+          class Slicer_Page
+        } {}
+        Fl_Group SlicerPage3 {
+          label {Slice 3}
+          callback {myMsg.sliceId      = 2;
+
+SlicerPage3->slider_freq->do_callback();
+SlicerPage3->slider_amp->do_callback();
+SlicerPage3->slider_phase->do_callback();}
+          xywh {5 25 470 215} box THIN_UP_BOX labeltype NO_LABEL labelsize 12 hide
+          class Slicer_Page
+        } {}
+        Fl_Group SlicerPage4 {
+          label {Slice 4}
+          callback {myMsg.sliceId      = 3;
+
+SlicerPage4->slider_freq->do_callback();
+SlicerPage4->slider_amp->do_callback();
+SlicerPage4->slider_phase->do_callback();}
+          xywh {5 25 470 215} box THIN_UP_BOX labeltype NO_LABEL labelsize 12
+          class Slicer_Page
+        } {}
+      }
+      Fl_Group {} {
+        label Status_group open
+        xywh {4 245 471 24} labeltype NO_LABEL labelsize 10
+      } {
+        Fl_Box version_revision {
+          label Version_revision selected
+          xywh {182 245 110 20} box ENGRAVED_FRAME labelsize 10
+        }
+        Fl_Box device_state {
+          label NO_DEVICE
+          xywh {5 247 15 15} box ROUND_UP_BOX color 1 labelsize 10 align 8
+        }
+      }
+    }
+  }
+  Function {show(int argc, char **argv)} {} {
+    code {mainWindow->show(argc, argv);} {}
+  }
+}
+
+decl {LinksiumViewUI *cvui;} {private local
+}
+
+Function {USBEventThread()} {open
+} {
+  code {// FT_STATUS device_status;
+    FT_SetVIDPID(0x0403, 0x6010);
+    DWORD libraryVersion = 0;
+    ftStatus  = FT_GetLibraryVersion(&libraryVersion);
+    
+    ftStatus  = FT_Open(FTDI_PORT, &ftHandle0);
+    ftStatus |= FT_SetBitMode(ftHandle0, 0xFF, FT_BITMODE_SYNC_FIFO);
+    ftStatus |= FT_SetTimeouts(ftHandle0, 100, 100);
+    ftStatus |= FT_SetUSBParameters(ftHandle0, BUFFER_SIZE, BUFFER_SIZE);
+    ftStatus |= FT_SetFlowControl(ftHandle0, FT_FLOW_RTS_CTS, 0, 0);
+    DWORD dwNumDevices = 0;
+    DWORD devIndex = 0;
+    char Buffer[16];
+    int count = 0;
+	myMsg.systemId = 0;
+	myMsg.sliceId = 0;
+	myMsg.withChecksum = false;
+	myMsg.type = MSG_TYPE_VERSION_RD;
+	
+	myMsg.hw_ver = 0;
+	myMsg.hw_rev = 0;
+	myMsg.sw_ver = 0;
+	myMsg.sw_rev = 0;
+	myMsg.xBuff(true);
+	
+	
+
+
+    do {
+
+        device_status = FT_ListDevices((PVOID)devIndex,Buffer,FT_LIST_BY_INDEX|FT_OPEN_BY_SERIAL_NUMBER);
+
+        if ((ftStatus == FT_OK) &&  FT_SUCCESS(device_status)){
+            fprintf(stderr, "USB device connected \\n"); 
+            fprintf(stderr, "FT_Open succeeded.  Handle is '%p' \\n", ftHandle0);
+            fprintf(stderr, "Device %d Serial Number - %s\\n", devIndex, Buffer);
+            cvui->device_state->color(FL_GREEN);
+            cvui->device_state->copy_label("Linked ON");
+            ftStatus |= FT_Write(ftHandle0, myMsg.buff, 1, &dwBytesWritten);
+	myMsg.clear_buff();
+	ftStatus |= FT_Read(ftHandle0, myMsg.buff, myMsg.len(), &dwBytesWritten);
+	myMsg.xBuff();
+	printf("HW Ver.rev=%01X.%01X SW Ver.rev=%01X.%01X\\n", myMsg.hw_ver, myMsg.hw_rev, myMsg.sw_ver, myMsg.sw_rev);
+	sprintf(version_revision,"HW:%X.%02X SW:%X.%02X", myMsg.hw_ver, myMsg.hw_rev, myMsg.sw_ver, myMsg.sw_rev);
+            
+            cvui->version_revision->copy_label(version_revision);
+            cvui->device_state->redraw();
+
+            
+        }else{   
+            FT_Close(ftHandle0);
+	    fprintf(stderr, "Error: FT_ListDevices:: '%d'\\n", device_status);
+            fprintf(stderr, "Failed to open USB device \\n");
+            cvui->device_state->color(FL_RED);
+            cvui->device_state->copy_label("Linked OFF");
+            cvui->version_revision->copy_label("");
+            cvui->device_state->redraw();
+            ftStatus = FT_Open(FTDI_PORT, &ftHandle0);
+        }
+
+        usleep(10000000);
+        //cvui->device_state->redraw();
+        //Fl::redraw();
+
+    }while(FT_SUCCESS(device_status));} {}
+}
+
+Function {} {open return_type int
+} {
+  code {FT_Close(ftHandle0);
+DWORD dwRxSize = 21;
+DWORD dwBytesWritten, dwBytesRead;
+
+
+const char *FPGA1 = "NL7V0UH3A";
+const char *FPGA2 = "NL7X6TIRB";
+const char debug_stp[] = "\\x00\\x11";
+const char sin_config_data[] = "\\x03\\xf0\\x00\\xac";
+const char read_data[] = "\\x02";
+const char lockin_data[] = "\\x07\\x00\\x00\\x00\\x0f\\xa0\\x0f\\xff\\x00\\x00\\x05";
+const char id_one_data[] = "\\x05\\x00\\x00\\x09\\x42\\x00\\x00";
+const char pid_two_data[] = "\\x09\\x00\\x00\\x05\\x00\\x00\\x00";
+
+const char *my_data = sin_config_data;
+const int data_size = strlen(my_data);
+
+cvui = new LinksiumViewUI();
+
+Fl::lock();
+
+Fl::visual(FL_DOUBLE | FL_INDEX);
+cvui->show(argc, argv);
+
+std::thread usbThread(USBEventThread);
+
+int result = Fl::run();
+
+usbThread.join();
+
+FT_Close(ftHandle0);} {}
+}
+
+comment {
+//
+// NameOfProgram, ShortDescription
+// Copyright (C) YYYY  NameOfAuthor
+//} {in_source in_header
+}
