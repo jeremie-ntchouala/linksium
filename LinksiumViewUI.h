@@ -196,9 +196,10 @@ private:
   Fl_Double_Window *mainWindow;
 public:
   Fl_Group *TitleApp;
+  Fl_Tabs *categorie;
 private:
-  inline void cb_Categorie_i(Fl_Tabs*, void*);
-  static void cb_Categorie(Fl_Tabs*, void*);
+  inline void cb_categorie_i(Fl_Tabs*, void*);
+  static void cb_categorie(Fl_Tabs*, void*);
 public:
   Fl_Group *ConfigPage;
   Fl_Choice *config_choice;

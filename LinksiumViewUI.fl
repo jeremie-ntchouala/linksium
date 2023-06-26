@@ -289,7 +289,7 @@ comment {
 }
 
 widget_class Slicer_Page {open
-  xywh {893 306 470 215} labelsize 10 align 80 hide size_range {470 215 470 215} position_relative
+  xywh {569 228 470 215} labelsize 10 align 80 size_range {470 215 470 215} visible position_relative
 } {
   Fl_Group {} {
     label input_ramp open
@@ -838,13 +838,13 @@ class LinksiumViewUI {open
       Fl_Group TitleApp {
         image {title_image.png} compress_image 1 bind_image 1 xywh {275 0 200 24} labeltype NO_LABEL labelfont 1 labelsize 16 align 536
       } {}
-      Fl_Tabs {} {
+      Fl_Tabs categorie {
         label Categorie
-        callback {printf("\\nval tab\\n");} open
+        callback {printf("\\nval tab %n\\n", categorie->value());} open selected
         xywh {5 5 470 236} selection_color 45 labeltype NO_LABEL
       } {
         Fl_Group ConfigPage {
-          label Config open
+          label Config
           xywh {5 25 470 215} box THIN_UP_BOX labeltype NO_LABEL labelsize 12 hide
         } {
           Fl_Group {} {
@@ -1026,7 +1026,7 @@ exit(0);
 SlicerPage1->slider_freq->do_callback();
 SlicerPage1->slider_amp->do_callback();
 SlicerPage1->slider_phase->do_callback();}
-          xywh {5 25 470 215} box THIN_UP_BOX labeltype NO_LABEL labelsize 12 hide
+          xywh {5 25 470 215} box THIN_UP_BOX labeltype NO_LABEL labelsize 12
           class Slicer_Page
         } {}
         Fl_Group SlicerPage2 {
@@ -1056,16 +1056,16 @@ SlicerPage3->slider_phase->do_callback();}
 SlicerPage4->slider_freq->do_callback();
 SlicerPage4->slider_amp->do_callback();
 SlicerPage4->slider_phase->do_callback();}
-          xywh {5 25 470 215} box THIN_UP_BOX labeltype NO_LABEL labelsize 12
+          xywh {5 25 470 215} box THIN_UP_BOX labeltype NO_LABEL labelsize 12 hide
           class Slicer_Page
         } {}
       }
       Fl_Group {} {
-        label Status_group open
+        label Status_group
         xywh {4 245 471 24} labeltype NO_LABEL labelsize 10
       } {
         Fl_Box version_revision {
-          label Version_revision selected
+          label Version_revision
           xywh {182 245 110 20} box ENGRAVED_FRAME labelsize 10
         }
         Fl_Box device_state {
@@ -1124,11 +1124,11 @@ Function {USBEventThread()} {open
             cvui->device_state->color(FL_GREEN);
             cvui->device_state->copy_label("Linked ON");
             ftStatus |= FT_Write(ftHandle0, myMsg.buff, 1, &dwBytesWritten);
-	myMsg.clear_buff();
-	ftStatus |= FT_Read(ftHandle0, myMsg.buff, myMsg.len(), &dwBytesWritten);
-	myMsg.xBuff();
-	printf("HW Ver.rev=%01X.%01X SW Ver.rev=%01X.%01X\\n", myMsg.hw_ver, myMsg.hw_rev, myMsg.sw_ver, myMsg.sw_rev);
-	sprintf(version_revision,"HW:%X.%02X SW:%X.%02X", myMsg.hw_ver, myMsg.hw_rev, myMsg.sw_ver, myMsg.sw_rev);
+		myMsg.clear_buff();
+		ftStatus |= FT_Read(ftHandle0, myMsg.buff, myMsg.len(), &dwBytesWritten);
+		myMsg.xBuff();
+		printf("HW Ver.rev=%01X.%01X SW Ver.rev=%01X.%01X\\n", myMsg.hw_ver, myMsg.hw_rev, myMsg.sw_ver, myMsg.sw_rev);
+		sprintf(version_revision,"HW:%X.%02X SW:%X.%02X", myMsg.hw_ver, myMsg.hw_rev, myMsg.sw_ver, myMsg.sw_rev);
             
             cvui->version_revision->copy_label(version_revision);
             cvui->device_state->redraw();

@@ -980,11 +980,11 @@ static Fl_Image *image_title_image() {
   return image;
 }
 
-void LinksiumViewUI::cb_Categorie_i(Fl_Tabs*, void*) {
-  printf("\nval tab\n");
+void LinksiumViewUI::cb_categorie_i(Fl_Tabs*, void*) {
+  printf("\nval tab %n\n", categorie->value());
 }
-void LinksiumViewUI::cb_Categorie(Fl_Tabs* o, void* v) {
-  ((LinksiumViewUI*)(o->parent()->user_data()))->cb_Categorie_i(o,v);
+void LinksiumViewUI::cb_categorie(Fl_Tabs* o, void* v) {
+  ((LinksiumViewUI*)(o->parent()->user_data()))->cb_categorie_i(o,v);
 }
 
 Fl_Menu_Item LinksiumViewUI::menu_config_choice[] = {
@@ -1147,10 +1147,10 @@ LinksiumViewUI::LinksiumViewUI() {
       TitleApp->align(Fl_Align(520|FL_ALIGN_INSIDE));
       TitleApp->end();
     } // Fl_Group* TitleApp
-    { Fl_Tabs* o = new Fl_Tabs(5, 5, 470, 236, "Categorie");
-      o->selection_color(FL_DARK2);
-      o->labeltype(FL_NO_LABEL);
-      o->callback((Fl_Callback*)cb_Categorie);
+    { categorie = new Fl_Tabs(5, 5, 470, 236, "Categorie");
+      categorie->selection_color(FL_DARK2);
+      categorie->labeltype(FL_NO_LABEL);
+      categorie->callback((Fl_Callback*)cb_categorie);
       { ConfigPage = new Fl_Group(5, 25, 470, 215, "Config");
         ConfigPage->box(FL_THIN_UP_BOX);
         ConfigPage->labeltype(FL_NO_LABEL);
@@ -1230,7 +1230,6 @@ LinksiumViewUI::LinksiumViewUI() {
         SlicerPage1->callback((Fl_Callback*)cb_SlicerPage1);
         SlicerPage1->align(Fl_Align(FL_ALIGN_TOP));
         SlicerPage1->when(FL_WHEN_RELEASE);
-        SlicerPage1->hide();
         SlicerPage1->end();
       } // Slicer_Page* SlicerPage1
       { SlicerPage2 = new Slicer_Page(5, 25, 470, 215, "Slice 2");
@@ -1272,10 +1271,11 @@ LinksiumViewUI::LinksiumViewUI() {
         SlicerPage4->callback((Fl_Callback*)cb_SlicerPage4);
         SlicerPage4->align(Fl_Align(FL_ALIGN_TOP));
         SlicerPage4->when(FL_WHEN_RELEASE);
+        SlicerPage4->hide();
         SlicerPage4->end();
       } // Slicer_Page* SlicerPage4
-      o->end();
-    } // Fl_Tabs* o
+      categorie->end();
+    } // Fl_Tabs* categorie
     { Fl_Group* o = new Fl_Group(4, 245, 471, 24, "Status_group");
       o->labeltype(FL_NO_LABEL);
       o->labelsize(10);
@@ -1341,11 +1341,11 @@ void USBEventThread() {
               cvui->device_state->color(FL_GREEN);
               cvui->device_state->copy_label("Linked ON");
               ftStatus |= FT_Write(ftHandle0, myMsg.buff, 1, &dwBytesWritten);
-  	myMsg.clear_buff();
-  	ftStatus |= FT_Read(ftHandle0, myMsg.buff, myMsg.len(), &dwBytesWritten);
-  	myMsg.xBuff();
-  	printf("HW Ver.rev=%01X.%01X SW Ver.rev=%01X.%01X\n", myMsg.hw_ver, myMsg.hw_rev, myMsg.sw_ver, myMsg.sw_rev);
-  	sprintf(version_revision,"HW:%X.%02X SW:%X.%02X", myMsg.hw_ver, myMsg.hw_rev, myMsg.sw_ver, myMsg.sw_rev);
+  		myMsg.clear_buff();
+  		ftStatus |= FT_Read(ftHandle0, myMsg.buff, myMsg.len(), &dwBytesWritten);
+  		myMsg.xBuff();
+  		printf("HW Ver.rev=%01X.%01X SW Ver.rev=%01X.%01X\n", myMsg.hw_ver, myMsg.hw_rev, myMsg.sw_ver, myMsg.sw_rev);
+  		sprintf(version_revision,"HW:%X.%02X SW:%X.%02X", myMsg.hw_ver, myMsg.hw_rev, myMsg.sw_ver, myMsg.sw_rev);
               
               cvui->version_revision->copy_label(version_revision);
               cvui->device_state->redraw();
