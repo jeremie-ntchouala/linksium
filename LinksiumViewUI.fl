@@ -840,7 +840,7 @@ class LinksiumViewUI {open
       } {}
       Fl_Tabs categorie {
         label Categorie
-        callback {printf("\\nval tab %n\\n", categorie->value());} open selected
+        callback {//printf("\\nval tab %n\\n", categorie->value());} open selected
         xywh {5 5 470 236} selection_color 45 labeltype NO_LABEL
       } {
         Fl_Group ConfigPage {
@@ -1026,7 +1026,7 @@ exit(0);
 SlicerPage1->slider_freq->do_callback();
 SlicerPage1->slider_amp->do_callback();
 SlicerPage1->slider_phase->do_callback();}
-          xywh {5 25 470 215} box THIN_UP_BOX labeltype NO_LABEL labelsize 12
+          xywh {5 25 470 215} box THIN_UP_BOX labeltype NO_LABEL labelsize 12 hide
           class Slicer_Page
         } {}
         Fl_Group SlicerPage2 {
@@ -1056,7 +1056,7 @@ SlicerPage3->slider_phase->do_callback();}
 SlicerPage4->slider_freq->do_callback();
 SlicerPage4->slider_amp->do_callback();
 SlicerPage4->slider_phase->do_callback();}
-          xywh {5 25 470 215} box THIN_UP_BOX labeltype NO_LABEL labelsize 12 hide
+          xywh {5 25 470 215} box THIN_UP_BOX labeltype NO_LABEL labelsize 12
           class Slicer_Page
         } {}
       }
@@ -1113,7 +1113,7 @@ Function {USBEventThread()} {open
 	
 
 
-    do {
+    //do {
 
         device_status = FT_ListDevices((PVOID)devIndex,Buffer,FT_LIST_BY_INDEX|FT_OPEN_BY_SERIAL_NUMBER);
 
@@ -1149,7 +1149,7 @@ Function {USBEventThread()} {open
         //cvui->device_state->redraw();
         //Fl::redraw();
 
-    }while(FT_SUCCESS(device_status));} {}
+    //}while(FT_SUCCESS(device_status));} {}
 }
 
 Function {} {open return_type int

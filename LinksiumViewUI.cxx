@@ -981,7 +981,7 @@ static Fl_Image *image_title_image() {
 }
 
 void LinksiumViewUI::cb_categorie_i(Fl_Tabs*, void*) {
-  printf("\nval tab %n\n", categorie->value());
+  //printf("\nval tab %n\n", categorie->value());
 }
 void LinksiumViewUI::cb_categorie(Fl_Tabs* o, void* v) {
   ((LinksiumViewUI*)(o->parent()->user_data()))->cb_categorie_i(o,v);
@@ -1230,6 +1230,7 @@ LinksiumViewUI::LinksiumViewUI() {
         SlicerPage1->callback((Fl_Callback*)cb_SlicerPage1);
         SlicerPage1->align(Fl_Align(FL_ALIGN_TOP));
         SlicerPage1->when(FL_WHEN_RELEASE);
+        SlicerPage1->hide();
         SlicerPage1->end();
       } // Slicer_Page* SlicerPage1
       { SlicerPage2 = new Slicer_Page(5, 25, 470, 215, "Slice 2");
@@ -1271,7 +1272,6 @@ LinksiumViewUI::LinksiumViewUI() {
         SlicerPage4->callback((Fl_Callback*)cb_SlicerPage4);
         SlicerPage4->align(Fl_Align(FL_ALIGN_TOP));
         SlicerPage4->when(FL_WHEN_RELEASE);
-        SlicerPage4->hide();
         SlicerPage4->end();
       } // Slicer_Page* SlicerPage4
       categorie->end();
@@ -1330,7 +1330,7 @@ void USBEventThread() {
   	
 
 
-      do {
+      //do {
 
           device_status = FT_ListDevices((PVOID)devIndex,Buffer,FT_LIST_BY_INDEX|FT_OPEN_BY_SERIAL_NUMBER);
 
@@ -1366,7 +1366,7 @@ void USBEventThread() {
           //cvui->device_state->redraw();
           //Fl::redraw();
 
-      }while(FT_SUCCESS(device_status));
+      //}while(FT_SUCCESS(device_status));
 }
 
 int main(int argc, char **argv) {
