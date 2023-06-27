@@ -384,24 +384,25 @@ Slicer_Page::Slicer_Page(int X, int Y, int W, int H, const char *L) :
     input_pid_group->labeltype(FL_NO_LABEL);
     input_pid_group->labelsize(10);
     input_pid_group->align(Fl_Align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE));
+    input_pid_group->hide();
     { Fl_Group* o = new Fl_Group(45, 5, 325, 30, "RAMP:");
       o->labelsize(10);
       o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
-      { Fl_Value_Input* o = new Fl_Value_Input(88, 17, 60, 17, "Min:");
+      { Fl_Value_Input* o = new Fl_Value_Input(86, 17, 65, 17, "Min:");
         o->labelsize(10);
         o->minimum(-10);
         o->maximum(10);
         o->textsize(10);
         o->align(Fl_Align(FL_ALIGN_TOP));
       } // Fl_Value_Input* o
-      { Fl_Value_Input* o = new Fl_Value_Input(160, 17, 60, 17, "Max:");
+      { Fl_Value_Input* o = new Fl_Value_Input(155, 17, 65, 17, "Max:");
         o->labelsize(10);
         o->minimum(-10);
         o->maximum(10);
         o->textsize(10);
         o->align(Fl_Align(FL_ALIGN_TOP));
       } // Fl_Value_Input* o
-      { Fl_Value_Input* o = new Fl_Value_Input(232, 17, 60, 17, "Speed:");
+      { Fl_Value_Input* o = new Fl_Value_Input(224, 17, 65, 17, "Speed:");
         o->labelsize(10);
         o->minimum(-10);
         o->maximum(10);
@@ -410,54 +411,64 @@ Slicer_Page::Slicer_Page(int X, int Y, int W, int H, const char *L) :
       } // Fl_Value_Input* o
       o->end();
     } // Fl_Group* o
-    { Fl_Group* o = new Fl_Group(45, 37, 325, 30, "PID 1:");
+    { Fl_Group* o = new Fl_Group(45, 35, 325, 34, "PID 1:");
       o->labelsize(10);
       o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
-      { pid1_p = new Fl_Value_Input(88, 50, 60, 17, "P:");
+      { pid1_p = new Fl_Value_Input(86, 48, 65, 17, "P:");
         pid1_p->labelsize(10);
         pid1_p->minimum(-100);
         pid1_p->maximum(100);
         pid1_p->textsize(10);
         pid1_p->align(Fl_Align(FL_ALIGN_TOP));
       } // Fl_Value_Input* pid1_p
-      { pid1_i = new Fl_Value_Input(160, 50, 60, 17, "I:");
+      { pid1_i = new Fl_Value_Input(155, 48, 65, 17, "I:");
         pid1_i->labelsize(10);
         pid1_i->minimum(-100);
         pid1_i->maximum(100);
         pid1_i->textsize(10);
         pid1_i->align(Fl_Align(FL_ALIGN_TOP));
       } // Fl_Value_Input* pid1_i
-      { pid1_d = new Fl_Value_Input(232, 50, 60, 17, "D:");
+      { pid1_d = new Fl_Value_Input(224, 48, 65, 17, "D:");
         pid1_d->labelsize(10);
         pid1_d->minimum(-100);
         pid1_d->maximum(100);
         pid1_d->textsize(10);
         pid1_d->align(Fl_Align(FL_ALIGN_TOP));
       } // Fl_Value_Input* pid1_d
+      { pid1 = new Fl_Button(297, 48, 60, 17, "cfg PID1");
+        pid1->tooltip("Send PID 1 configuration");
+        pid1->selection_color(FL_SELECTION_COLOR);
+        pid1->labelsize(10);
+      } // Fl_Button* pid1
       o->end();
     } // Fl_Group* o
     { Fl_Group* o = new Fl_Group(45, 69, 325, 31, "PID 2:");
       o->labelsize(10);
       o->align(Fl_Align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE));
-      { pid2_p = new Fl_Value_Input(88, 83, 60, 17, "P:");
+      { pid2_p = new Fl_Value_Input(86, 83, 65, 17, "P:");
         pid2_p->labelsize(10);
         pid2_p->minimum(-100);
         pid2_p->maximum(100);
         pid2_p->textsize(10);
         pid2_p->align(Fl_Align(FL_ALIGN_TOP));
       } // Fl_Value_Input* pid2_p
-      { pid2_i = new Fl_Value_Input(160, 83, 60, 17, "I:");
+      { pid2_i = new Fl_Value_Input(155, 83, 65, 17, "I:");
         pid2_i->labelsize(10);
         pid2_i->maximum(10);
         pid2_i->textsize(10);
         pid2_i->align(Fl_Align(FL_ALIGN_TOP));
       } // Fl_Value_Input* pid2_i
-      { pid2_d = new Fl_Value_Input(232, 83, 60, 17, "D:");
+      { pid2_d = new Fl_Value_Input(224, 83, 65, 17, "D:");
         pid2_d->labelsize(10);
         pid2_d->maximum(10);
         pid2_d->textsize(10);
         pid2_d->align(Fl_Align(FL_ALIGN_TOP));
       } // Fl_Value_Input* pid2_d
+      { pid2 = new Fl_Button(298, 83, 60, 17, "cfg PID2");
+        pid2->tooltip("Send PID 2 configuration");
+        pid2->selection_color(FL_SELECTION_COLOR);
+        pid2->labelsize(10);
+      } // Fl_Button* pid2
       o->end();
     } // Fl_Group* o
     input_pid_group->end();
@@ -467,7 +478,6 @@ Slicer_Page::Slicer_Page(int X, int Y, int W, int H, const char *L) :
     input_slide_group->labeltype(FL_NO_LABEL);
     input_slide_group->labelsize(10);
     input_slide_group->align(Fl_Align(FL_ALIGN_CENTER|FL_ALIGN_INSIDE));
-    input_slide_group->hide();
     { Fl_Group* o = new Fl_Group(45, 4, 325, 32, "frequence");
       o->labeltype(FL_NO_LABEL);
       o->labelsize(10);
@@ -1012,6 +1022,13 @@ Fl_Menu_Item LinksiumViewUI::menu_scheme_choice[] = {
  {0,0,0,0,0,0,0,0,0}
 };
 
+void LinksiumViewUI::cb_color_theme_i(Fl_Choice*, void*) {
+  const char* color = scheme_choice->text(scheme_choice->value());
+}
+void LinksiumViewUI::cb_color_theme(Fl_Choice* o, void* v) {
+  ((LinksiumViewUI*)(o->parent()->parent()->parent()->parent()->user_data()))->cb_color_theme_i(o,v);
+}
+
 Fl_Menu_Item LinksiumViewUI::menu_color_theme[] = {
  {"light", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 10, 0},
  {"dark", 0,  0, 0, 0, (uchar)FL_NORMAL_LABEL, 0, 10, 0},
@@ -1178,6 +1195,7 @@ LinksiumViewUI::LinksiumViewUI() {
             color_theme->down_box(FL_BORDER_BOX);
             color_theme->labelsize(10);
             color_theme->textsize(10);
+            color_theme->callback((Fl_Callback*)cb_color_theme);
             color_theme->menu(menu_color_theme);
           } // Fl_Choice* color_theme
           { config_file = new Fl_Input(77, 84, 370, 20, "Config File:");
@@ -1332,33 +1350,36 @@ void USBEventThread() {
 
       //do {
 
-          device_status = FT_ListDevices((PVOID)devIndex,Buffer,FT_LIST_BY_INDEX|FT_OPEN_BY_SERIAL_NUMBER);
+          device_status = FT_ListDevices(&devIndex,Buffer,FT_LIST_BY_INDEX|FT_OPEN_BY_SERIAL_NUMBER);
 
           if ((ftStatus == FT_OK) &&  FT_SUCCESS(device_status)){
               fprintf(stderr, "USB device connected \n"); 
               fprintf(stderr, "FT_Open succeeded.  Handle is '%p' \n", ftHandle0);
               fprintf(stderr, "Device %d Serial Number - %s\n", devIndex, Buffer);
-              cvui->device_state->color(FL_GREEN);
-              cvui->device_state->copy_label("Linked ON");
               ftStatus |= FT_Write(ftHandle0, myMsg.buff, 1, &dwBytesWritten);
   		myMsg.clear_buff();
   		ftStatus |= FT_Read(ftHandle0, myMsg.buff, myMsg.len(), &dwBytesWritten);
   		myMsg.xBuff();
   		printf("HW Ver.rev=%01X.%01X SW Ver.rev=%01X.%01X\n", myMsg.hw_ver, myMsg.hw_rev, myMsg.sw_ver, myMsg.sw_rev);
   		sprintf(version_revision,"HW:%X.%02X SW:%X.%02X", myMsg.hw_ver, myMsg.hw_rev, myMsg.sw_ver, myMsg.sw_rev);
-              
+              Fl::lock();
+              cvui->device_state->color(FL_GREEN);
+              cvui->device_state->copy_label("Linked ON");
               cvui->version_revision->copy_label(version_revision);
               cvui->device_state->redraw();
+              Fl::unlock();
 
               
           }else{   
               FT_Close(ftHandle0);
-  	    fprintf(stderr, "Error: FT_ListDevices:: '%d'\n", device_status);
+  	    fprintf(stderr, "Error: FT_ListDevices:: '%s'\n", TxtFtStatus(device_status));
               fprintf(stderr, "Failed to open USB device \n");
+              Fl::lock();
               cvui->device_state->color(FL_RED);
               cvui->device_state->copy_label("Linked OFF");
               cvui->version_revision->copy_label("");
               cvui->device_state->redraw();
+              Fl::unlock();
               ftStatus = FT_Open(FTDI_PORT, &ftHandle0);
           }
 
@@ -1370,22 +1391,15 @@ void USBEventThread() {
 }
 
 int main(int argc, char **argv) {
-  FT_Close(ftHandle0);
-  DWORD dwRxSize = 21;
-  DWORD dwBytesWritten, dwBytesRead;
-
-
-  const char *FPGA1 = "NL7V0UH3A";
-  const char *FPGA2 = "NL7X6TIRB";
-  const char debug_stp[] = "\x00\x11";
-  const char sin_config_data[] = "\x03\xf0\x00\xac";
-  const char read_data[] = "\x02";
-  const char lockin_data[] = "\x07\x00\x00\x00\x0f\xa0\x0f\xff\x00\x00\x05";
-  const char id_one_data[] = "\x05\x00\x00\x09\x42\x00\x00";
-  const char pid_two_data[] = "\x09\x00\x00\x05\x00\x00\x00";
-
-  const char *my_data = sin_config_data;
-  const int data_size = strlen(my_data);
+  Fl::get_system_colors();
+  Fl::background(0xD4, 0xD0, 0xC8);
+    Fl::background2(0xFF, 0xFF, 0xFF);
+    Fl::foreground(0x00, 0x00, 0x00);
+    Fl::set_color(FL_INACTIVE_COLOR, 0x5F, 0x5F, 0x5F);
+    Fl::set_color(FL_SELECTION_COLOR, 0x0A, 0x24, 0x6A);
+    Fl::set_color(FL_FREE_COLOR, 0xD4, 0xD0, 0xC8);
+    Fl_Tooltip::color(fl_rgb_color(0xFF, 0xFF, 0xE1));
+    Fl_Tooltip::textcolor(FL_FOREGROUND_COLOR);
 
   cvui = new LinksiumViewUI();
 

@@ -6,6 +6,7 @@
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_File_Chooser.H>
 #include <FL/Fl_Native_File_Chooser.H>
+#include <FL/Fl_Tooltip.H>
 #include "ftd2xx.h"
 #include "config_ftdi.h"
 extern FT_STATUS ftStatus;
@@ -122,9 +123,11 @@ public:
   Fl_Value_Input *pid1_p;
   Fl_Value_Input *pid1_i;
   Fl_Value_Input *pid1_d;
+  Fl_Button *pid1;
   Fl_Value_Input *pid2_p;
   Fl_Value_Input *pid2_i;
   Fl_Value_Input *pid2_d;
+  Fl_Button *pid2;
   Fl_Group *input_slide_group;
   Fl_Button *decrease_freq;
 private:
@@ -211,7 +214,11 @@ private:
   static Fl_Menu_Item menu_scheme_choice[];
 public:
   Fl_Choice *color_theme;
+private:
+  inline void cb_color_theme_i(Fl_Choice*, void*);
+  static void cb_color_theme(Fl_Choice*, void*);
   static Fl_Menu_Item menu_color_theme[];
+public:
   Fl_Input *config_file;
 private:
   inline void cb__i(Fl_Button*, void*);
